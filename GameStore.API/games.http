@@ -1,26 +1,26 @@
 GET http://localhost:5234/games
 
 ###
-GET http://localhost:5234/games/2
+GET http://localhost:5234/games/1
 
 ###
 POST http://localhost:5234/games
 Content-Type: application/json
 
 {
-    "name": "Minecraft",
-    "genre": "Kids and Family",
+    "name": "Minecraft22",
+    "genreId": 5,
     "price": 19.99,
     "releaseDate": "2011-11-18"
 }
 
 ###
-PUT http://localhost:5234/games/2
+PUT http://localhost:5234/games/1
 Content-Type: application/json
 
 {
     "name": "Counter Strike 2",
-    "genre": "Shooter",
+    "genreId": 2,
     "price": 15.99,
     "releaseDate": "2023-09-15"
 }
