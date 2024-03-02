@@ -1,5 +1,3 @@
-.vscode
-
-./GameStore.API/bin
-./GameStore.API/obj
-./GameStore.API/GameStore.db
+bin
+obj
+vscode
