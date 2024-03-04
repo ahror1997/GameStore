@@ -4,6 +4,7 @@ using GameStore.API.Endpoints;
 using GameStore.API.Health;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,25 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddNpgsql<GameStoreContext>(connectionString);
 
+
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(options =>
+    {
+        options.AddPrometheusExporter();
+
+        options.AddMeter("Microsoft.AspNetCore.Hosting",
+                         "Microsoft.AspNetCore.Server.Kestrel");
+
+        options.AddView("http.server.request.duration",
+            new ExplicitBucketHistogramConfiguration
+            {
+                Boundaries = new double[] { 0, 0.005, 0.01, 0.025, 0.05,
+                       0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 }
+            });
+    });
+
+builder.Services.AddMetrics();
+
 var app = builder.Build();
 
 // logging
@@ -39,6 +59,8 @@ app.UseHealthChecks("/_health", new HealthCheckOptions()
 
 // database migration
 await app.MigrateDbAsync();
+
+app.MapPrometheusScrapingEndpoint();
 
 // endpoints
 app.MapGamesEndpoints();
